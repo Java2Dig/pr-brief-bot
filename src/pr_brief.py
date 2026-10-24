@@ -260,14 +260,29 @@ def main() -> int:
 
     files = list_pr_files(api, repo, pr_number, token)
     user_prompt = build_user_prompt(pr, files)
+    api_key = os.environ.get("LLM_API_KEY", "").strip()
 
-    if dry_run and os.environ.get("LLM_API_KEY") in (None, ""):
+    if dry_run and not api_key:
         print(user_prompt)
+        return 0
+
+    if not api_key:
+        notice = (
+            "PR briefing bot is installed, but repository secret `LLM_API_KEY` is not set.\n\n"
+            "Add it under **Settings → Secrets and variables → Actions**, then push a new commit "
+            "(or close and reopen this PR). Until then this bot cannot write a review brief.\n"
+        )
+        print("::notice::LLM_API_KEY is not set; posting setup instructions instead of a brief")
+        body = f"{COMMENT_MARKER}\n{notice}"
+        if dry_run:
+            print(body)
+            return 0
+        upsert_comment(api, repo, pr_number, token, body)
         return 0
 
     brief = llm_complete(
         base_url=env("LLM_BASE_URL", "https://api.openai.com/v1"),
-        api_key=env("LLM_API_KEY"),
+        api_key=api_key,
         model=env("LLM_MODEL", "gpt-4o-mini"),
         user_prompt=user_prompt,
     )

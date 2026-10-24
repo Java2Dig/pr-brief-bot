@@ -32,7 +32,7 @@ jobs:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - uses: Java2Dig/pr-brief-bot@v1.1
+      - uses: Java2Dig/pr-brief-bot@v1.2
         with:
           github-token: ${{ github.token }}
           llm-api-key: ${{ secrets.LLM_API_KEY }}
