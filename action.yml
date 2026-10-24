@@ -1,0 +1,35 @@
+name: PR briefing bot
+description: Post an 8-line reviewer brief on a pull request. Comments only — never approves.
+author: pr-brief-bot
+inputs:
+  github-token:
+    description: Token with pull-requests: write (usually github.token)
+    required: true
+  llm-api-key:
+    description: API key for an OpenAI-compatible Chat Completions endpoint
+    required: true
+  llm-base-url:
+    description: OpenAI-compatible base URL
+    required: false
+    default: https://api.openai.com/v1
+  llm-model:
+    description: Model id
+    required: false
+    default: gpt-4o-mini
+runs:
+  using: composite
+  steps:
+    - name: Generate and post PR brief
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_API_URL: ${{ github.api_url }}
+        GITHUB_EVENT_PATH: ${{ github.event_path }}
+        LLM_API_KEY: ${{ inputs.llm-api-key }}
+        LLM_BASE_URL: ${{ inputs.llm-base-url }}
+        LLM_MODEL: ${{ inputs.llm-model }}
+      run: python3 "${{ github.action_path }}/src/pr_brief.py"
+branding:
+  icon: file-text
+  color: gray-dark
