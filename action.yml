@@ -3,7 +3,7 @@ description: Post an 8-line reviewer brief on a pull request. Comments only — 
 author: pr-brief-bot
 inputs:
   github-token:
-    description: Token with pull-requests: write (usually github.token)
+    description: "Token with pull-requests: write (usually github.token)"
     required: true
   llm-api-key:
     description: API key for an OpenAI-compatible Chat Completions endpoint
@@ -11,7 +11,7 @@ inputs:
   llm-base-url:
     description: OpenAI-compatible base URL
     required: false
-    default: https://api.openai.com/v1
+    default: "https://api.openai.com/v1"
   llm-model:
     description: Model id
     required: false
